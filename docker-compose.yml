@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - mongo-dev:/data/db
+    env_file:
+      - ./config/development.env
+
+  frontend:
+    image: 'notes-fontend-dev'
+    build: ./client
+    volumes:
+      - ./client/src:/app/src
+    ports:
+      - '5173:5173'
+
+  backend:
+    image: 'notes-backend-dev'
+    build: ./server
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./server/src:/app/src
+      - ./server/nodemon.json:/app/nodemon.json
+    env_file:
+      - ./config/development.env
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo-dev:
